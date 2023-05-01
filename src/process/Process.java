@@ -1,6 +1,5 @@
 package process;
 
-import java.util.Comparator;
 
 public class Process{
    public int arriveTime;
@@ -8,15 +7,18 @@ public class Process{
    public int burstTime;
    public int restBurstTime;
    public int restArriveTime;
+   public int priority;
+   public int age = 0;
    public String name;
    
-   public Process(String name, int arrivalTime, int burstTime) {
+   public Process(String name, int arrivalTime, int burstTime, int priority) {
       this.name = name;
       this.arriveTime = arrivalTime;
       this.burstTime = burstTime;
       this.restBurstTime = burstTime;
       this.waitingTime -= arrivalTime;
-      this.restArriveTime = arriveTime;
+      this.restArriveTime = arrivalTime;
+      this.priority = priority;
    }
    
 }
