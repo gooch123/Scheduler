@@ -12,6 +12,7 @@ public class Round_Robin_Scheduler{
    int totalWaitingTime =0;
    int totalTurnAroundTime =0;
    int processQuantity;
+   boolean check=true;
    
    public Round_Robin_Scheduler(int timeSlice){
       this.timeSlice = timeSlice;
@@ -29,36 +30,49 @@ public class Round_Robin_Scheduler{
       queue.add(p);
    }
    
-   public void addJopQueue(Process p) {
-   
+   private void showGUI(Process p){
+      
+      if(check)
+         System.out.print("■ ");
+      else
+         System.out.print("□ ");
    }
    
    public void schedule(){
+      System.out.println("\n-----------------------RR-----------------------");
       processQuantity = queue.size();
       int restTimeSlice=timeSlice;
       while (!queue.isEmpty()){
          Process p = queue.poll();
+         System.out.print(p.name + " ");
          while(true){
             if(restTimeSlice > 0 && p.restBurstTime >0){
                restTimeSlice--;
                p.restBurstTime--;
+               showGUI(p);
                for(Process pRest : queue)
                   pRest.waitingTime++;
             } else if (restTimeSlice > 0 && p.restBurstTime == 0) {
-               processStateOut(p);
+               //processStateOut(p);
+               check = !check;
                break;
             } else if (restTimeSlice == 0 && p.restBurstTime > 0) {
                queue.add(p);
+               if(queue.size() != 1)
+                  check = !check;
                restTimeSlice = timeSlice;
                break;
             } else if(restTimeSlice == 0 && p.restBurstTime ==0){
-               processStateOut(p);
+               //processStateOut(p);
+               check = !check;
                restTimeSlice = timeSlice;
                break;
             }
          }
+         totalWaitingTime += p.waitingTime;
+         totalTurnAroundTime += (p.waitingTime+p.burstTime);
       }
-      System.out.println("-----------------------RR-----------------------");
+      System.out.println("\n------------------------------------------------");
       System.out.println("totalWaitingTime : " + totalWaitingTime
               + "\ntotalTurnAroundTime : " + totalTurnAroundTime
               + "\nAverageTurnAroundTime : " + (double)totalTurnAroundTime/processQuantity

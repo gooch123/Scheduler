@@ -5,14 +5,12 @@ import RR_Scheduler.*;
 import SRTF_Scheduler.*;
 import Priority_Scheduler.*;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Random;
 
 public class Main {
    public static void main(String []args) throws InterruptedException {
       FCFS_Scheduler fcfs = new FCFS_Scheduler();
-      Round_Robin_Scheduler rr = new Round_Robin_Scheduler(10);
+      Round_Robin_Scheduler rr = new Round_Robin_Scheduler(2);
       SRTF_Scheduler srtf = new SRTF_Scheduler();
       Priority_Scheduler prio = new Priority_Scheduler();
       Random random = new Random();
@@ -52,6 +50,26 @@ public class Main {
       prio.addProcess(new Process("p4",2,4,1));
       prio.addProcess(new Process("p5",4,14,2));
       prio.schedule();
+//
+      srtf.addProcess(new Process("p1",0,10,3));
+      srtf.addProcess(new Process("p2",1,28,2));
+      srtf.addProcess(new Process("p3",2,6,4));
+      srtf.addProcess(new Process("p4",2,4,1));
+      srtf.addProcess(new Process("p5",4,14,2));
+      srtf.schedule();
+      
+      rr.addProcess(new Process("p1",0,10,3));
+      rr.addProcess(new Process("p2",1,7,2));
+      rr.addProcess(new Process("p3",2,5,4));
+      rr.addProcess(new Process("p4",2,4,1));
+      rr.addProcess(new Process("p5",4,14,2));
+      rr.schedule();
+      
+      fcfs.addProcess(new Process("p1",0,10,3));
+      fcfs.addProcess(new Process("p2",1,7,2));
+      fcfs.addProcess(new Process("p3",2,5,4));
+      fcfs.addProcess(new Process("p4",2,4,1));
+      fcfs.addProcess(new Process("p5",4,14,2));
+      fcfs.schedule();
    }
-   static Comparator<Process> comp= (a,b) -> a.arriveTime-b.arriveTime;
 }
