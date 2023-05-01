@@ -66,8 +66,10 @@ public class Priority_Scheduler {
             p.restBurstTime--;
             for(Process pR : qList) {
                pR.age++;
-               if(pR.age >= aging)
+               if(pR.age >= aging) {
                   pR.priority++;
+                  pR.age = 0;
+               }
             }
             showGUI();
             if(!qList.isEmpty()) {
