@@ -72,6 +72,8 @@ public class FCFS_Scheduler{
       System.out.println("AverageTurnAroundTime : " + (double)totalTurnAroundTime/processQuantity);
       System.out.println("AverageWaitingTime : " + (double)totalWaitingTime/processQuantity);
       System.out.println("---------------------------------------");
+      totalTurnAroundTime =0;
+      totalWaitingTime =0;
       queue.clear();
    }
    

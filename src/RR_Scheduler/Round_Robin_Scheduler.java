@@ -94,6 +94,8 @@ public class Round_Robin_Scheduler{
               + "\nAverageTurnAroundTime : " + (double)totalTurnAroundTime/processQuantity
               + "\naverageWaitngTime : " +(double)totalWaitingTime/processQuantity);
       System.out.println("------------------------------------------------");
+      totalTurnAroundTime = 0;
+      totalWaitingTime = 0;
       queue.clear();
    }
    

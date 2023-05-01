@@ -85,6 +85,8 @@ public class SRTF_Scheduler {
               + "\nAverageTurnAroundTime : " + (double) totalTurnAroundTime / processQuantity
               + "\naverageWaitngTime : " + (double) totalWatingtime / processQuantity);
       System.out.println("--------------------------------------------------");
+      totalWatingtime = 0;
+      totalTurnAroundTime = 0;
       qList.clear();
    }
    

@@ -93,6 +93,8 @@ public class Priority_Scheduler {
               + "\naverageTurnAroundTime : " + (double)totalTurnAroundTime/processQuantity
               + "\naverageWaitngTime : " +(double)totalWaitingTime/processQuantity);
       System.out.println("------------------------------------------------");
+      totalTurnAroundTime =0;
+      totalWaitingTime = 0;
       qList.clear();
    }
 }
