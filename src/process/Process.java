@@ -9,10 +9,9 @@ public class Process{
    public int restArriveTime;
    public int priority;
    public int age = 0;
-   public int agingStack = 0;
    public String name;
    
-   public Process(String name, int arrivalTime, int burstTime, int priority) {
+   public Process(String name, int arrivalTime, int burstTime, int priority)  {
       this.name = name;
       this.arriveTime = arrivalTime;
       this.burstTime = burstTime;
@@ -21,5 +20,7 @@ public class Process{
       this.restArriveTime = arrivalTime;
       this.priority = priority;
    }
+   
+   
    
 }

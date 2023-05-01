@@ -1,12 +1,11 @@
 package FCFS_Scheduler;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+
 import process.Process;
 
 public class FCFS_Scheduler{
-   Queue<Process> queue;
+   PriorityQueue<Process> queue;
    int totalWaitingTime = 0;
    int totalTurnAroundTime = 0;
    int processQuantity;
@@ -14,20 +13,23 @@ public class FCFS_Scheduler{
    boolean check = true;
    
    public FCFS_Scheduler(){
-      queue = new LinkedList<Process>();
+      queue = new PriorityQueue<>(comp);
       burstList = new ArrayList<>();
    }
    
+   private static Comparator<Process> comp = (o1, o2)-> {
+      if(o1.arriveTime == o2.arriveTime)
+         return 0;
+      else {
+         if(o1.arriveTime <= o2.arriveTime)
+            return -1;
+         else
+            return 1;
+      }
+   };
+   
    public void addProcess(Process p) {
       queue.add(p);
-   }
-   
-   private void showPorcess(Process p) {
-      System.out.println("name : "+p.name+
-              " arrivalTime : " +p.arriveTime+
-              " burstTime : "+p.burstTime+
-              " waitingTime : "+(p.waitingTime>0?p.waitingTime:0) +
-              " turnAroundTime : " + (p.waitingTime+p.burstTime));
    }
    
    private void showGUI(Process p){
@@ -40,16 +42,24 @@ public class FCFS_Scheduler{
    public void schedule(){
       System.out.println("\n----------------FCFS-------------------");
       processQuantity = queue.size();
+      
       while(!queue.isEmpty()) {
+         while (!queue.isEmpty() && queue.peek().restArriveTime > 0){
+            for(Process p : queue) {
+               p.restArriveTime--;
+               p.waitingTime++;
+            }
+            System.out.print("- ");
+         }
          Process p = queue.poll();
          System.out.print(p.name + " ");
-         int burstCount=0;
          while(p.restBurstTime > 0) {
             p.restBurstTime--;
-            burstCount++;
             showGUI(p);
             for (Process pRest : queue) {
                pRest.waitingTime++;
+               if(pRest.restArriveTime > 0)
+                  pRest.restArriveTime--;
             }
          }
          check = !check;
@@ -62,6 +72,7 @@ public class FCFS_Scheduler{
       System.out.println("AverageTurnAroundTime : " + (double)totalTurnAroundTime/processQuantity);
       System.out.println("AverageWaitingTime : " + (double)totalWaitingTime/processQuantity);
       System.out.println("---------------------------------------");
+      queue.clear();
    }
    
 }

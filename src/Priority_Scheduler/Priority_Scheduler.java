@@ -8,6 +8,7 @@ public class Priority_Scheduler {
    int totalWaitingTime = 0;
    int totalTurnAroundTime = 0;
    int processQuantity;
+   int aging;
    
    public Priority_Scheduler(){
       qList = new ArrayList<>();
@@ -34,58 +35,53 @@ public class Priority_Scheduler {
       else
          System.out.print("□ ");
    }
+   public void setAging(int n){this.aging =n;}
    
    public void addProcess(Process p){
       qList.add(p);
    }
    
-   private void showProcess(Process p){
-      totalTurnAroundTime += p.waitingTime + p.burstTime;
-      totalWaitingTime += p.waitingTime;
-      System.out.println("name : "+p.name+
-              " arrivalTime : " +p.arriveTime+
-              " burstTime : "+p.burstTime+
-              " waitingTime : "+(p.waitingTime>0?p.waitingTime:0) +
-              " turnAroundTime : " + (p.waitingTime+p.burstTime) +
-              " priority : " + p.priority);
-   }
-   
    public void schedule() {
       System.out.println("\n---------------------Priority---------------------");
+      Collections.sort(qList,comp);
       processQuantity = qList.size();
       while (!qList.isEmpty()){
+         while (qList.get(0).restArriveTime > 0){
+            for(Process p : qList) {
+               p.restArriveTime--;
+               p.waitingTime++;
+            }
+            System.out.print("- ");
+         }
          Process p = qList.get(0);
          qList.remove(0);
          System.out.print(p.name + " ");
          while (p.restBurstTime != 0){
             Collections.sort(qList,comp);
             if(!qList.isEmpty() && qList.get(0).restArriveTime == 0 && qList.get(0).priority > p.priority){ //우선순위 교체
-//               System.out.println(p.name + " 에서 " + qList.get(0).name + " 로 선점");
                qList.add(p);
                check = !check;
                break;
             }
             p.restBurstTime--;
+            for(Process pR : qList) {
+               pR.age++;
+               if(pR.age >= aging)
+                  pR.priority++;
+            }
             showGUI();
-//            System.out.println(p.name + " 버스트 : " + p.restBurstTime + " 우선순위 : " + p.priority);
             if(!qList.isEmpty()) {
                for (Process restP : qList) {
                   if (restP.restArriveTime > 0) restP.restArriveTime--;
                   restP.waitingTime++;
-//                  System.out.println(restP.name + " 프로세스 남은 도착시간 : " + restP.restArriveTime + " 남은 버스트 : " + restP.restBurstTime
-//                  + " 우선순위 : " + restP.priority);
                }
             }
             if(p.restBurstTime == 0){
                totalTurnAroundTime += p.waitingTime + p.burstTime;
                totalWaitingTime += p.waitingTime;
-//               showProcess(p);
-//               if(!qList.isEmpty())
-//                  System.out.println(qList.get(0).name + "로 버스트 교체 !!");
                check = !check;
                break;
             }
-//          Thread.sleep(200);
          }
       }
       
@@ -95,5 +91,6 @@ public class Priority_Scheduler {
               + "\naverageTurnAroundTime : " + (double)totalTurnAroundTime/processQuantity
               + "\naverageWaitngTime : " +(double)totalWaitingTime/processQuantity);
       System.out.println("------------------------------------------------");
+      qList.clear();
    }
 }

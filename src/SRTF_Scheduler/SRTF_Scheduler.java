@@ -4,7 +4,6 @@ import java.util.*;
 
 
 public class SRTF_Scheduler {
-   PriorityQueue<Process> queue;
    ArrayList<Process> qList;
    int totalWatingtime =0;
    int totalTurnAroundTime=0;
@@ -13,7 +12,6 @@ public class SRTF_Scheduler {
    
    public SRTF_Scheduler(){
       qList = new ArrayList<>();
-      queue = new PriorityQueue<>(comp);
    }
    
    private void showGUI(){
@@ -42,53 +40,44 @@ public class SRTF_Scheduler {
       qList.add(p);
    }
    
-   private void showProcess(Process p){
-      System.out.println("name : "+p.name
-              +" arrivalTime : " +p.arriveTime
-              +" burstTime : "+p.burstTime
-              +" waitingTime : "+(p.waitingTime>0?p.waitingTime:0)
-              + " turnAroundTime : " + (p.waitingTime+p.burstTime));
-      totalTurnAroundTime += (p.waitingTime+p.burstTime);
-      totalWatingtime += p.waitingTime;
-   }
-   
    public void schedule() {
+      Collections.sort(qList, comp);
       System.out.println("-----------------------SRTF-----------------------");
       processQuantity = qList.size();
       while (!qList.isEmpty()) {
+         while (qList.get(0).restArriveTime > 0){
+            for(Process p : qList) {
+               p.restArriveTime--;
+               p.waitingTime++;
+            }
+            System.out.print("- ");
+         }
          Process p = qList.get(0);
          System.out.print(p.name + " ");
          qList.remove(0);
          while (p.restBurstTime != 0) {
             Collections.sort(qList, comp);
             if (!qList.isEmpty() && qList.get(0).restArriveTime == 0 && qList.get(0).restBurstTime < p.restBurstTime) { //우선순위 교체
-//               System.out.println(p.name + " 에서 " + qList.get(0).name + " 로 선점");
                check = !check;
                qList.add(p);
                break;
             }
             p.restBurstTime--;
             showGUI();
-//            System.out.println(p.name + " 버스트 : " + p.restBurstTime);
             if (!qList.isEmpty()) {
                for (Process restP : qList) {
                   if (restP.restArriveTime > 0) restP.restArriveTime--;
                   restP.waitingTime++;
-//                  System.out.println(restP.name + " 프로세스 남은 도착시간 : " + restP.restArriveTime + " 남은 버스트 : " + restP.restBurstTime
-//                          + "대기시간 : " + restP.waitingTime);
                }
             }
             if (p.restBurstTime == 0) {
-//               showProcess(p);
-//               if (!qList.isEmpty())
-//                  System.out.println(qList.get(0).name + "로 버스트 교체 !!");
+               totalTurnAroundTime += (p.waitingTime+p.burstTime);
+               totalWatingtime += p.waitingTime;
                check = !check;
                break;
             }
-//          Thread.sleep(200);
          }
-         totalTurnAroundTime += (p.waitingTime+p.burstTime);
-         totalWatingtime += p.waitingTime;
+         
       }
       System.out.println("\n--------------------------------------------------");
       System.out.println("totalWaitingTime : " + totalWatingtime
@@ -96,6 +85,7 @@ public class SRTF_Scheduler {
               + "\nAverageTurnAroundTime : " + (double) totalTurnAroundTime / processQuantity
               + "\naverageWaitngTime : " + (double) totalWatingtime / processQuantity);
       System.out.println("--------------------------------------------------");
+      qList.clear();
    }
    
 }

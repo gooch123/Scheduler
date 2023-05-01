@@ -1,4 +1,5 @@
 package Test;
+import java.io.IOException;
 import java.util.*;
 
 class Number{
@@ -60,5 +61,23 @@ public class Test {
       Collections.sort(list,comp);
       for(Number n : list)
          System.out.println(n.name + " " + n.num + " "  +n.time);
+      
+      int n = 0, s =0, q =0;
+      Scanner sc= new Scanner(System.in);
+      while (true){
+         try {
+            n = sc.nextInt();
+            s= sc.nextInt();
+            q = sc.nextInt();
+            sc.nextLine();
+            break;
+         } catch (InputMismatchException e){
+            sc.nextLine();
+            System.out.println("숫자 입력");
+         }
+      }
+      System.out.println(n);
    }
+   
+   
 }

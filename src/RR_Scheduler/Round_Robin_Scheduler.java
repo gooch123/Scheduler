@@ -1,37 +1,41 @@
 package RR_Scheduler;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+
 import process.Process;
 
 public class Round_Robin_Scheduler{
-   Queue<Process> queue;
-   ArrayList<Process> jobQ;
+   ArrayList<Process> queue;
    int timeSlice;
    int totalWaitingTime =0;
    int totalTurnAroundTime =0;
    int processQuantity;
    boolean check=true;
    
-   public Round_Robin_Scheduler(int timeSlice){
-      this.timeSlice = timeSlice;
-      queue = new LinkedList<Process>();
-      jobQ = new ArrayList<Process>();
+   public Round_Robin_Scheduler(){
+      queue = new ArrayList<>();
    }
-   private void processStateOut(Process p){
-      System.out.println("name : "+p.name + " arrivalTIme : "+ p.arriveTime +" burstTime : "+p.burstTime+
-              " waitingTime : "+p.waitingTime +" turnAroundTime : "+(p.waitingTime+p.burstTime));
-      totalWaitingTime += p.waitingTime;
-      totalTurnAroundTime += (p.waitingTime+p.burstTime);
-   }
+   
+   private static Comparator<Process> comp = (o1, o2)-> {
+      if(o1.arriveTime == o2.arriveTime)
+         return 0;
+      else {
+         if(o1.arriveTime <= o2.arriveTime)
+            return -1;
+         else
+            return 1;
+      }
+   };
    
    public void addProcess(Process p){
       queue.add(p);
    }
    
-   private void showGUI(Process p){
-      
+   public void setTimeSlice(int time){
+      this.timeSlice = time;
+   }
+   
+   private void showGUI(){
       if(check)
          System.out.print("■ ");
       else
@@ -39,19 +43,31 @@ public class Round_Robin_Scheduler{
    }
    
    public void schedule(){
+      Collections.sort(queue,comp);
       System.out.println("\n-----------------------RR-----------------------");
       processQuantity = queue.size();
       int restTimeSlice=timeSlice;
       while (!queue.isEmpty()){
-         Process p = queue.poll();
+         while (queue.get(0).restArriveTime > 0){
+            for(Process p : queue) {
+               p.restArriveTime--;
+               p.waitingTime++;
+            }
+            System.out.print("- ");
+         }
+         Process p = queue.get(0);
+         queue.remove(0);
          System.out.print(p.name + " ");
          while(true){
             if(restTimeSlice > 0 && p.restBurstTime >0){
                restTimeSlice--;
                p.restBurstTime--;
-               showGUI(p);
-               for(Process pRest : queue)
+               showGUI();
+               for(Process pRest : queue) {
                   pRest.waitingTime++;
+                  if(pRest.restArriveTime > 0)
+                     pRest.restArriveTime--;
+               }
             } else if (restTimeSlice > 0 && p.restBurstTime == 0) {
                //processStateOut(p);
                check = !check;
@@ -78,7 +94,7 @@ public class Round_Robin_Scheduler{
               + "\nAverageTurnAroundTime : " + (double)totalTurnAroundTime/processQuantity
               + "\naverageWaitngTime : " +(double)totalWaitingTime/processQuantity);
       System.out.println("------------------------------------------------");
-      
+      queue.clear();
    }
    
 }
